@@ -8,4 +8,5 @@ The first data set is of size (1646779, 151) including 1646779  loans and 150 fe
 The problem we are intersted is the loan status. In this data set, there are 8 kinds of status related to the loan: Current, Fully Paid, Issued, In Grace Period, Late(16-30 days), Late(31-120 days), Defualt, Charged off. We want to model the probability of transition from one status to another. Thus it will be a multi-label classification problem. 
 
 First, take a look at the distribution of loan status.
-![alt text](https://github.com/tongkewu/Lending-Club-Data-Analysis/master/images/loan_status.png "Loan Status")
+
+![alt text](https://github.com/tongkewu/Lending-Club-Data-Analysis/blob/master/image/loan_status_dist.png "Loan Status")
