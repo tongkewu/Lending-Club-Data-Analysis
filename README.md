@@ -7,6 +7,15 @@ The first data set is of size (1646779, 151) including 1646779  loans and 150 fe
 
 The problem we are intersted is the loan status. In this data set, there are 8 kinds of status related to the loan: Current, Fully Paid, Issued, In Grace Period, Late(16-30 days), Late(31-120 days), Defualt, Charged off. We want to model the probability of transition from one status to another. Thus it will be a multi-label classification problem. 
 
-First, take a look at the distribution of loan status.
+## Data Exploration
+### Response Variable -- Loan Status
+Most of the loans are current and fully paid. The late and default loans are in small proportion thus this is an unbalanced case. We should consider set class_weight to improve the model performance in the future.
 
 ![alt text](https://github.com/tongkewu/Lending-Club-Data-Analysis/blob/master/image/loan_status_dist.png "Loan Status")
+
+### Features
+There are 166 features at the beginning. However, the data is not complete and we should check missing values first. Then we need to figure out why the data is missing and make adjustment.
+
+![alt text](https://github.com/tongkewu/Lending-Club-Data-Analysis/blob/master/image/missing_value_dist.png 'missing_value')
+
+1. Records related to settlement are absent for 99.09%. Settlement is a plan for borrower who get charged off. Therefore, only loans charged off keep this record. Since settlement is the consequence of charged off, data related to it should not be considered as feature that can classify loan status. Thus we dumped 7 features related to settlement.
