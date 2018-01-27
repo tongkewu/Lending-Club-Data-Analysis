@@ -30,8 +30,9 @@ Most of the loans are current and fully paid. The late and default loans are in 
 
 ## Modeling
 ### Random Forest Classifier
-
-
+3333
+<img src="/image/feature_importance.png">
+3333
 |                    | precision | recall | f1-score | support |
 |--------------------|:---------:|:------:|:--------:|:--------|
 | Charged off        |      1.00 |   0.99 |     0.99 |    1098 |
