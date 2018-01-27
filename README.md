@@ -26,4 +26,4 @@ There are 166 features at the beginning. However, the data is not complete and w
 ### Response Variable -- Loan Status
 Most of the loans are current and fully paid. The late and default loans are in small proportion thus this is an unbalanced case. We should consider set class_weight to improve the model performance in the future.
 
-<img src="/image/loan_status_dist.png.png">
+<img src="/image/loan_status_dist.png">
