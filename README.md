@@ -8,21 +8,29 @@ The first data set is of size (1646779, 151) including 1646779  loans and 150 fe
 The problem we are intersted is the loan status. In this data set, there are 8 kinds of status related to the loan: Current, Fully Paid, Issued, In Grace Period, Late(16-30 days), Late(31-120 days), Defualt, Charged off. We want to model the probability of transition from one status to another. Thus it will be a multi-label classification problem. 
 
 ## Data Processing
-There are 166 features at the beginning. However, the data is not complete and we should check missing values first. Then we need to figure out why the data is missing and make adjustment.
+There are 166 columns in the combineng dataset. However, the data is not complete and we should check missing values first. Then we need to figure out why the data is missing and make adjustments. Meanwhile, we should remove useless data that can be either not informative or carrying the same information.
 
 <img src="/image/missing_value_dist.png">
 
-1. Records related to settlement are absent for 99.09%. Settlement is a plan for borrower who gets charged off. Therefore, only loans charged off keep this record. Since settlement is the consequence of charged off, data related to it should not be considered as feature that can classify loan status. Thus I dumped 7 features related to settlement.
+1. 100% Missing Data: There are 16 variables related to joint borrower/second applicant completely blank. It may because the joint loan program just launched at March 2017 and it's been a short time. Thus I dumped these variables.
 
-2. Records related to hardship plan are missing for 99.96%. Since there is only one loan with hardship plan features, I decided to abondon the 15 colomns of data related to hardship plan.
+2. 99.96% Missing Data: There are 15 variables related to hardship plan only with one loan reacord. Thus I dropped them.
 
-3. Data related to date. There are several data such as 'issue_d', 'next_pymnt_d' in the format of time stamp. However, most of this time data come from Loan Statistics -- the panel data. It turns out missing when we expend the time line. Furthermore, most of them seem extra since they have nothing to do with the loan payment like 'next_pymnt_d' (next payment date). Thus I removed these kind of data. A few other time data can be used in relative value, ie. the difference of 'issue_d' (issue_date) and 'MONTH' represents the age of loan (it turned out the same as MOB in the data set which has no definition). I kept the calculated value and dumped the original values. 
+3. Consequential Data: 7 variables are related to settlement plan and are absent for 99.09%. Settlement is a plan for borrower who gets charged off. Therefore, only loans charged off keep this record. Since settlement is the consequence of charged off, data related to it should not be considered as feature that can classify loan status. Thus I dumped 7 features related to settlement.
 
-4. The rest of missing value cannot be removed directly since we do not know the reason of missing. Thus I created dummy variables to indicate whether the data is missing and treated them as new features.
+4. Meaningless Data: including 'url', 'member_id', which are complete but not informative thus are dropped. And 'last_pymnt_d', 'last_pymnt_amt', 'next_pymnt_d' are removed since they have the same information as that of payment history data.
 
-5. Convert categorical variable (string) into numbers. Yet here is the exception. The feature 'emp_title' means employment title where the input varies from case to case. Thus it is not reasonable to keep a categorical variable of 64712 levels. The similar features includes 'desc'(description), 'url', 'zip_code'. One way to solve this problem is to use dummy variable to indiate whethere the data entry exsits.
+After the above steps, there remains 122 columns in the data set. The next step is to format time data. 
 
-Finally, I got 14 categorical vairables, 189 continuous variable.
+5. Time Data: The aim is to convert time data to numerical data. One kind of variable like 'term' which has entry of ' 36 month' can be directly made number. The other kind of variables like 'issued_d' and 'MONTH' should be calculated and produce new feature like 'age of loan' to keep the time information from both variables.
+
+Then we should check the type of data and take strategy to deal with the rest of missing value that cannot be removed directly. 
+
+6. Categorical Data: There are 19 categorical variables. However, some of them such as 'emp_title', 'desc' hold too many levels since they are text message. It will be great if NLP is employed to extract infromation from them to reduce the number of levels. Due to the time limit, I created dummy variables to simply indicate there is data point or not. For the rest of categorical variables, I added a level of 'missing' that represents missing value. 
+
+7. Continuous Data: For continuous variables, I created dummy variables to indicate whether the data is missing and filled in missing value with arbitrary number. It is a good idea to use an obviously out of range data.
+
+Finally, we got a complete data set. 
 
 ## Data Exploration
 ### Response Variable -- Loan Status
@@ -32,9 +40,9 @@ Most of the loans are current and fully paid. The late and default loans are in 
 
 ## Modeling
 ### Random Forest Classifier
-3333
+
 <img src="/image/feature_importance.png">
-3333
+
 |                    | precision | recall | f1-score | support |
 |--------------------|:---------:|:------:|:--------:|:--------|
 | Charged off        |      1.00 |   0.99 |     0.99 |    1098 |
