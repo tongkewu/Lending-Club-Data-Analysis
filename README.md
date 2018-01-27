@@ -27,3 +27,32 @@ There are 166 features at the beginning. However, the data is not complete and w
 Most of the loans are current and fully paid. The late and default loans are in small proportion thus this is an unbalanced case. We should consider set class_weight to improve the model performance in the future.
 
 <img src="/image/loan_status_dist.png">
+
+## Modeling
+### Random Forest Classifier
+
+|                    | precision | recall | f1-score | support |
+|--------------------|:---------:|:------:|:--------:|:--------|
+| Charged off        |      1.00 |   0.99 |     0.99 |    1098 |
+| Current            |      1.00 |   1.00 |     1.00 |  178698 |
+| Default            |     0.00  |  0.01  |  0.00    |     770 |
+| Fully Paid         |      0.89 |  0.81  |    0.85  |    5583 |
+| In Grace Period    |   0.00    |  0.00  |    0.00  |       5 |
+| Issued             |    0.00   |   0.00 |    0.00  |     0   |
+| Late (16-30 days)  |    0.02   |  0.46  |  0.04    |    165  |
+| Late (31-120 days) |    0.00   |  0.00  |   0.00   |   4461  |
+| avg / total        |    0.97   |   0.96 |    0.97  |  190780 |
+
+### Logistic Classifier
+
+|                   | precision |   recall | f1-score |  support|
+|-------------------|:----------|:---------|:---------|:--------|
+|       Charged Off |      1.00 |     1.00 |     1.00 |     1098|
+|           Current |      0.99 |     1.00 |     0.99 |   178698|
+|           Default |      0.88 |     0.24 |     0.37 |      770|
+|        Fully Paid |      0.98 |     0.97 |     0.97 |     5583|
+|   In Grace Period |      0.00 |     0.00 |     0.00 |        5|
+|            Issued |      0.00 |     0.00 |     0.00 |        0|
+| Late (16-30 days) |      0.00 |     0.00 |     0.00 |      165|
+|Late (31-120 days) |      0.83 |     0.66 |     0.74 |     4461|
+|       avg / total |      0.98 |     0.99 |     0.98 |   190780|
