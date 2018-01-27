@@ -30,7 +30,7 @@ Then we should check the type of data and take strategy to deal with the rest of
 
 7. Continuous Data: For continuous variables, I created dummy variables to indicate whether the data is missing and filled in missing value with arbitrary number. It is a good idea to use an obviously out of range data.
 
-Finally, we got a complete data set. 
+Finally, I added a column called 'last_loan_status' so that the the payment time series is decomposed into subsamples. 
 
 ## Data Exploration
 ### Response Variable -- Loan Status
