@@ -16,11 +16,11 @@ There are 166 features at the beginning. However, the data is not complete and w
 
 2. Records related to hardship plan are missing for 99.96%. Since there is only one loan with hardship plan features, I decided to abondon the 15 colomns of data related to hardship plan.
 
-3. Data related to date. There are several data such as issue_d, next_pymnt_d in the format of time stamp. However, most of this time data come from Loan Statistics -- the panel data. It turns out missing when we expend the time line. Furthermore, most of them seem extra since they have nothing to do with the loan payment like next_pymnt_d (next payment date). Thus I removed these kind of data. A few other time data can be used in relative value, ie. the difference of issue_d (issue_date) and MONTH represents the age of loan (it turned out the same as MOB in the data set which has no definition). I kept the calculated value and dumped the original values. 
+3. Data related to date. There are several data such as 'issue_d', 'next_pymnt_d' in the format of time stamp. However, most of this time data come from Loan Statistics -- the panel data. It turns out missing when we expend the time line. Furthermore, most of them seem extra since they have nothing to do with the loan payment like 'next_pymnt_d' (next payment date). Thus I removed these kind of data. A few other time data can be used in relative value, ie. the difference of 'issue_d' (issue_date) and 'MONTH' represents the age of loan (it turned out the same as MOB in the data set which has no definition). I kept the calculated value and dumped the original values. 
 
 4. The rest of missing value cannot be removed directly since we do not know the reason of missing. Thus I created dummy variables to indicate whether the data is missing and treated them as new features.
 
-5. Convert categorical variable (string) into numbers.
+5. Convert categorical variable (string) into numbers. Yet here is the exception. The feature 'emp_title' means employment title where the input varies from case to case. Thus it is not reasonable to keep a categorical variable of 64712 levels. The similar features includes 'desc'(description), 'url', 'zip_code'. One way to solve this problem is to use dummy variable to indiate whethere the data entry exsits.
 
 ## Data Exploration
 ### Response Variable -- Loan Status
