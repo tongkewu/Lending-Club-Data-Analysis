@@ -22,6 +22,8 @@ There are 166 features at the beginning. However, the data is not complete and w
 
 5. Convert categorical variable (string) into numbers. Yet here is the exception. The feature 'emp_title' means employment title where the input varies from case to case. Thus it is not reasonable to keep a categorical variable of 64712 levels. The similar features includes 'desc'(description), 'url', 'zip_code'. One way to solve this problem is to use dummy variable to indiate whethere the data entry exsits.
 
+Finally, I got 14 categorical vairables, 189 continuous variable.
+
 ## Data Exploration
 ### Response Variable -- Loan Status
 Most of the loans are current and fully paid. The late and default loans are in small proportion thus this is an unbalanced case. We should consider set class_weight to improve the model performance in the future.
