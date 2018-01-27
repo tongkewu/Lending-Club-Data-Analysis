@@ -10,7 +10,7 @@ The problem we are intersted is the loan status. In this data set, there are 8 k
 ## Data Processing
 There are 166 features at the beginning. However, the data is not complete and we should check missing values first. Then we need to figure out why the data is missing and make adjustment.
 
-![alt text](https://github.com/tongkewu/Lending-Club-Data-Analysis/master/image/missing_value_dist.png 'missing_value')
+<img src="/image/missing_value_dist.png">
 
 1. Records related to settlement are absent for 99.09%. Settlement is a plan for borrower who gets charged off. Therefore, only loans charged off keep this record. Since settlement is the consequence of charged off, data related to it should not be considered as feature that can classify loan status. Thus I dumped 7 features related to settlement.
 
@@ -26,4 +26,4 @@ There are 166 features at the beginning. However, the data is not complete and w
 ### Response Variable -- Loan Status
 Most of the loans are current and fully paid. The late and default loans are in small proportion thus this is an unbalanced case. We should consider set class_weight to improve the model performance in the future.
 
-![alt text](https://github.com/tongkewu/Lending-Club-Data-Analysis/master/image/loan_status_dist.png "Loan Status")
+<img src="/image/loan_status_dist.png.png">
