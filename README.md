@@ -31,7 +31,6 @@ Most of the loans are current and fully paid. The late and default loans are in 
 ## Modeling
 ### Random Forest Classifier
 
-<img src="/image/feature_importance.png">
 
 |                    | precision | recall | f1-score | support |
 |--------------------|:---------:|:------:|:--------:|:--------|
