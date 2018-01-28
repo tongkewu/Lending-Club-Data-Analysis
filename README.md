@@ -33,10 +33,18 @@ Then we should check the type of data and take strategy to deal with the rest of
 Then I added a column called 'last_loan_status' so that the the payment time series is decomposed into subsamples. Finally the feature matrix is of 172 columns and a subset of data with size (1271866, 172) will be analyzed.
 
 ## Data Exploration
-### Response Variable -- Loan Status
+### Loan Status
 Most of the loans are current and fully paid. The late and default loans are in small proportion thus this is an unbalanced case. We should consider set class_weight to improve the model performance in the future.
 
 <img src="/image/loan_status_dist.png">
+
+### Credit Grade
+
+<img src="/image/grade_dist.png">
+
+### Purpose of Loan Application
+
+<img src="/image/purpose_dist.png">
 
 ## Modeling
 ### Feature Vectorization
