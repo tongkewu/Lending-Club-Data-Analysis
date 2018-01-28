@@ -50,7 +50,7 @@ Now we will evaluate the performance of score by precision, recall and f1-score.
 
 <strong>Precision</strong> (a.k.a positive predictive value) is the fraction of relevant instances among the retrieved instances.
 
-<strong>Recall (a.k.a sensitivity) is the fraction of relevant instances that have been retrieved over the total amount of relevant instances.
+<strong>Recall </strong> (a.k.a sensitivity) is the fraction of relevant instances that have been retrieved over the total amount of relevant instances.
 
 |                  |  precision |   recall|  f1-score|   support|
 |------------------|:----------:|:-------:|:--------:|:---------|
