@@ -74,15 +74,15 @@ Now we will evaluate the performance of score by precision, recall and f1-score.
 In this multiclass classification problem, we focus on identifying 'bad' loans inclunding default, late, in grace period. Thus we want the classifier with better recall which can identify 'bad' loans accurately from the pool. The above table shows this simple random forest classifier is good at identify late loans. And it can be improved by tuning parameters of trees. Especially, we can consider increase the class weight of 'bad' loans so the model will penalize more on wrong prediction of 'bad' loans.
 
 ### Logistic Classifier
-
-|                   | precision |   recall | f1-score |  support|
-|-------------------|:----------|:---------|:---------|:--------|
-|       Charged Off |      1.00 |     1.00 |     1.00 |     1098|
-|           Current |      0.99 |     1.00 |     0.99 |   178698|
-|           Default |      0.88 |     0.24 |     0.37 |      770|
-|        Fully Paid |      0.98 |     0.97 |     0.97 |     5583|
-|   In Grace Period |      0.00 |     0.00 |     0.00 |        5|
-|            Issued |      0.00 |     0.00 |     0.00 |        0|
-| Late (16-30 days) |      0.00 |     0.00 |     0.00 |      165|
-|Late (31-120 days) |      0.83 |     0.66 |     0.74 |     4461|
-|       avg / total |      0.98 |     0.99 |     0.98 |   190780|
+This logistic classifier used One-Over-Rest strategy to solve multiclass classification. It fitted one model for each class. Thus it yieled 8 set of coefficients of features. The model performed well on identifying Default yet badly when considering recall.
+|                  |  precision |   recall | f1-score   support |
+|------------------|:----------:|:--------:|:-------:|:--------:|
+|       Charged Off|       1.00 |     1.00 |     1.00|      2161|
+|           Current|       0.99 |     1.00 |     1.00|    357162|
+|           Default|       0.83 |     0.26 |     0.39|      1469|
+|        Fully Paid|       0.98 |     0.96 |     0.97|     11435|
+|   In Grace Period|       0.00 |     0.00 |     0.00|         7|
+|            Issued|       0.00 |     0.00 |     0.00|       336|
+| Late (16-30 days)|       0.56 |     0.00 |     0.00|      8990|
+|Late (31-120 days)|       0.00 |     0.00 |     0.00|         0|
+|       avg / total|       0.98 |     0.97 |    0.97 |   381560 |
