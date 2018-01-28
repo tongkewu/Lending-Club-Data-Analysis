@@ -75,6 +75,7 @@ In this multiclass classification problem, we focus on identifying 'bad' loans i
 
 ### Logistic Classifier
 This logistic classifier used One-Over-Rest strategy to solve multiclass classification. It fitted one model for each class. Thus it yieled 8 set of coefficients of features. The model performed well on identifying Default yet badly when considering recall.
+
 |                  |  precision |   recall | f1-score|  support |
 |------------------|:----------:|:--------:|:-------:|:---------|
 |       Charged Off|       1.00 |     1.00 |     1.00|      2161|
