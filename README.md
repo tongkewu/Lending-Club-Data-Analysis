@@ -30,7 +30,7 @@ Then we should check the type of data and take strategy to deal with the rest of
 
 7. Continuous Data: For continuous variables, I created dummy variables to indicate whether the data is missing and filled in missing value with arbitrary number. It is a good idea to use an obviously out of range data.
 
-Finally, I added a column called 'last_loan_status' so that the the payment time series is decomposed into subsamples. 
+Then I added a column called 'last_loan_status' so that the the payment time series is decomposed into subsamples. Finally the feature matrix is of 172 columns and a subset of data with size (1271866, 172) will be analyzed.
 
 ## Data Exploration
 ### Response Variable -- Loan Status
@@ -39,21 +39,30 @@ Most of the loans are current and fully paid. The late and default loans are in 
 <img src="/image/loan_status_dist.png">
 
 ## Modeling
+### Feature Vectorization
+To deal with categorical features, we should convert a feature with k levels to k-1 dummy variables. A proper way to do is to use DictVectorizer in python to create dummy variables and store in the sparse matrix. After the vectorization, we got a expended feature matrix with size(890306,26856).
 ### Random Forest Classifier
+A random forest classifier with parameters <i> n_estimators = 100, max_depth = 5 </i> is firstly build to find important features. The following are features ranked top 50. From the barplot, we find features related to payment history are more helpful to identify status of loans.
 
 <img src="/image/feature_importance.png">
 
-|                    | precision | recall | f1-score | support |
-|--------------------|:---------:|:------:|:--------:|:--------|
-| Charged off        |      1.00 |   0.99 |     0.99 |    1098 |
-| Current            |      1.00 |   1.00 |     1.00 |  178698 |
-| Default            |     0.00  |  0.01  |  0.00    |     770 |
-| Fully Paid         |      0.89 |  0.81  |    0.85  |    5583 |
-| In Grace Period    |   0.00    |  0.00  |    0.00  |       5 |
-| Issued             |    0.00   |   0.00 |    0.00  |     0   |
-| Late (16-30 days)  |    0.02   |  0.46  |  0.04    |    165  |
-| Late (31-120 days) |    0.00   |  0.00  |   0.00   |   4461  |
-| avg / total        |    0.97   |   0.96 |    0.97  |  190780 |
+Now we will evaluate the performance of score by precision, recall and f1-score.
+
+<strong>Precision</strong> (a.k.a positive predictive value) is the fraction of relevant instances among the retrieved instances.
+<strong>Recall (a.k.a sensitivity) is the fraction of relevant instances that have been retrieved over the total amount of relevant instances.
+
+|                  |  precision |   recall|  f1-score|   support|
+|------------------|:----------:|:-------:|:--------:|:---------|
+|       Charged Off|       1.00 |     1.00|      1.00|      2161|
+|           Current|       1.00 |     1.00|      1.00|    357162|
+|           Default|       0.02 |     0.18|      0.04|      1469|
+|        Fully Paid|       0.07 |     0.00|     0.00 |    11435 |
+|   In Grace Period|       0.00 |     0.00|      0.00|         7|
+|            Issued|       0.00 |     0.00|      0.00|       336|
+| Late (16-30 days)|       0.91 |     0.77|      0.84|      8990|
+|       avg / total|       0.96 |     0.96|      0.96|    381560|
+
+In this multiclass classification problem, we focus on identifying 'bad' loans inclunding default, late, in grace period. Thus we want the classifier with better recall which can identify 'bad' loans accurately from the pool. The above table shows this simple random forest classifier is good at identify late loans. And it can be improved by tuning parameters of trees. Especially, we can consider increase the class weight of 'bad' loans so the model will penalize more on wrong prediction of 'bad' loans.
 
 ### Logistic Classifier
 
