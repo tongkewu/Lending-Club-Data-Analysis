@@ -39,6 +39,118 @@ df2 = data2.loc[:,['LOAN_ID','PBAL_BEG_PERIOD','PRNCP_PAID','INT_PAID','FEE_PAID
 ########  New Data Set
 loan_data = df2.merge(data1, how = 'outer', left_on = 'LOAN_ID', right_on = 'id')  # shape (2543732, 166)
 
+# Check Completeness of Loan Status
+loan_start = data_all.groupby('LOAN_ID').apply(lambda x: x.reset_index(drop = True).loc[0, ['MOB', 'PERIOD_END_LSTAT', 'issue_d', 'MONTH']])
+loan_start['MOB'].unique()
+# array([1, 0])
+loan_start['PERIOD_END_LSTAT'].unique()
+# array(['Current', 'Fully Paid', 'Issued', 'Late (31-120 days)'], dtype=object)
+# ideally the loan should start with 'Issued' or 'Current' thus 'Late (31-120 days)' and 'Fully Paid' appeared weirdly
+loan_start[loan_start['PERIOD_END_LSTAT']=='Late (31-120 days)']
+# then we called these loans 
+
+#0        MOB    PERIOD_END_LSTAT   issue_d    MONTH
+#LOAN_ID                                            
+#1070129    1  Late (31-120 days)  Jan-2012  JAN2012
+#1081948    1  Late (31-120 days)  Jan-2012  FEB2012
+#1082215    1  Late (31-120 days)  Jan-2012  FEB2012
+#1100834    1  Late (31-120 days)  Jan-2012  FEB2012
+
+# they are all with MOB=1
+
+data_all[data_all['LOAN_ID']==1070129].loc[:, ['PERIOD_END_LSTAT','MOB','issue_d','MONTH']]
+#         PERIOD_END_LSTAT  MOB   issue_d    MONTH
+#24931  Late (31-120 days)    1  Jan-2012  JAN2012
+#24932  Late (31-120 days)    2  Jan-2012  FEB2012
+#24933          Fully Paid    3  Jan-2012  MAR2012
+
+data_all[data_all['LOAN_ID']==1081948].loc[:, ['PERIOD_END_LSTAT','MOB','issue_d','MONTH']]
+#         PERIOD_END_LSTAT  MOB   issue_d    MONTH
+#42343  Late (31-120 days)    1  Jan-2012  FEB2012
+#42344  Late (31-120 days)    2  Jan-2012  MAR2012
+#42345         Charged Off    3  Jan-2012  APR2012
+
+data_all[data_all['LOAN_ID']==1082215].loc[:, ['PERIOD_END_LSTAT','MOB','issue_d','MONTH']]
+#         PERIOD_END_LSTAT  MOB   issue_d    MONTH
+#42771  Late (31-120 days)    1  Jan-2012  FEB2012
+#42772  Late (31-120 days)    2  Jan-2012  MAR2012
+#42773  Late (31-120 days)    3  Jan-2012  APR2012
+#42774  Late (31-120 days)    4  Jan-2012  MAY2012
+#42775         Charged Off    5  Jan-2012  JUN2012
+
+# a glance at Default loans
+data_all[data_all['PERIOD_END_LSTAT']=='Default'].loc[:,['LOAN_ID','MOB','issue_d','MONTH']]
+#         LOAN_ID  MOB   issue_d    MONTH
+#67         57167    7  Aug-2014  MAR2015
+#1459      404548    6  Nov-2014  MAY2015
+#3389      580086    7  Jul-2014  FEB2015
+#5351      633767   21  Oct-2012  JUL2014
+#5606      641849   29  May-2013  OCT2015
+#5862      649184   29  Jun-2012  NOV2014
+
+data_all[data_all['LOAN_ID']==57167].loc[:, ['PERIOD_END_LSTAT','MOB','issue_d','MONTH']]
+#      PERIOD_END_LSTAT  MOB   issue_d    MONTH
+#61             Current    1  Aug-2014  SEP2014
+#62             Current    2  Aug-2014  OCT2014
+#63             Current    3  Aug-2014  NOV2014
+#64  Late (31-120 days)    4  Aug-2014  DEC2014
+#65  Late (31-120 days)    5  Aug-2014  JAN2015
+#66  Late (31-120 days)    6  Aug-2014  FEB2015
+#67             Default    7  Aug-2014  MAR2015
+#68         Charged Off    8  Aug-2014  APR2015
+
+data_all[data_all['LOAN_ID']==404548].loc[:, ['PERIOD_END_LSTAT','MOB','issue_d','MONTH']]
+#        PERIOD_END_LSTAT  MOB   issue_d    MONTH
+#1454             Current    1  Nov-2014  DEC2014
+#1455             Current    2  Nov-2014  JAN2015
+#1456  Late (31-120 days)    3  Nov-2014  FEB2015
+#1457  Late (31-120 days)    4  Nov-2014  MAR2015
+#1458  Late (31-120 days)    5  Nov-2014  APR2015
+#1459             Default    6  Nov-2014  MAY2015
+#1460         Charged Off    7  Nov-2014  JUN2015
+
+#%%
+#'Current', 'Fully Paid', 'Issued', 'Late (31-120 days)'
+def period_begin_lstat(x):
+    if x.reset_index().loc[0, ['PERIOD_END_LSTAT', 'MOB']].values.tolist() == ['Current', 0]:
+        sr = pd.Series(['Issued']).append(x['PERIOD_END_LSTAT'][:-1])
+    elif x.reset_index().loc[0, ['PERIOD_END_LSTAT', 'MOB']].values.tolist() == ['Current', 1]:
+        sr = pd.Series(['Current']).append(x['PERIOD_END_LSTAT'][:-1])
+    elif x.reset_index().loc[0, ['PERIOD_END_LSTAT', 'MOB']].values.tolist() == ['Fully Paid', 0]:
+        sr = pd.Series(['Issued'])
+    elif x.reset_index().loc[0, ['PERIOD_END_LSTAT', 'MOB']].values.tolist() == ['Fully Paid', 1]:
+        sr = pd.Series(['Current'])
+    elif x['PERIOD_END_LSTAT'].values[0] == 'Issued':
+        sr = pd.Series(['Issued']).append(x['PERIOD_END_LSTAT'][:-1])
+    elif x['PERIOD_END_LSTAT'].values[0] == 'Late (31-120 days)':
+        sr = pd.Series(['Current']).append(x['PERIOD_END_LSTAT'][:-1])
+    
+    return sr
+
+PERIOD_BGN_LSTAT = data_all.groupby('LOAN_ID').apply(lambda x: period_begin_lstat(x))
+data_all['PERIOD_BGN_LSTAT'] = PERIOD_BGN_LSTAT.values
+#%%
+# transition matrix begin(key) -> end(value)
+transition = {'Issued':['Issued', 'Current','Fully Paid'],
+              'Current': ['Current', 'Fully Paid', 'In Grace Period', 'Late (16-30 days)', 'Late (31-120 days)', 'Charged Off'], 
+              'In Grace Period': ['Current', 'Fully Paid', 'Late (16-30 days)', 'Late (31-120 days)', 'In Grace Period'],
+              'Late (16-30 days)': ['Current','Fully Paid', 'Late (16-30 days)', 'Late (31-120 days)', 'In Grace Period', 'Charged Off'],
+              'Late (31-120 days)': ['Current','Fully Paid', 'Late (16-30 days)', 'Late (31-120 days)', 'In Grace Period', 'Default', 'Charged Off'],
+              'Default': ['Current', 'Fully Paid', 'Default', 'Charged Off'],
+              'Fully Paid': ['Fully Paid']}
+
+weird_loan_id = []
+for loan_id, e, b in zip(data_all['LOAN_ID'], data_all['PERIOD_END_LSTAT'], data_all['PERIOD_BGN_LSTAT']):
+    if b in ['Charged Off']:
+        weird_loan_id.append(loan_id)
+        print(b)
+    else:
+        if e not in transition[b]:
+            print(loan_id, b, e)
+            weird_loan_id.append(loan_id)
+
+data_all = data_all[data_all['LOAN_ID'].isin(weird_loan_id)==False]  
+
 # Check Missing Value
 msv = pd.DataFrame({'missing_value':data_all.isnull().sum()})
 msv['percent'] = msv['missing_value']/len(data_all)
