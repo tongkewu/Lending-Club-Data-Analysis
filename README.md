@@ -9,6 +9,8 @@ The problem we are intersted is the loan status. In this data set, there are 8 k
 
 ## Data Processing
 
+The data set is about monthly transitions of loan status. First take a glance of status transition from period beginning to period end.
+
 | BGN\END          | Charged Off | Current | Default | Fully Paid | In Grace Period | Issued | Late (16-30 days) | Late (31-120 days) |
 |------------------|:-----------:|:-------:|:-------:|:----------:|:---------------:|:------:|:-----------------:|:-------------------|
 | Charged Off      | 0           | 0       |  0      |  0         |   0             | 0      |   0               | 0                  |
