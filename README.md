@@ -8,6 +8,31 @@ The first data set is of size (1646779, 151) including 1646779  loans and 150 fe
 The problem we are intersted is the loan status. In this data set, there are 8 kinds of status related to the loan: Current, Fully Paid, Issued, In Grace Period, Late(16-30 days), Late(31-120 days), Defualt, Charged off. We want to model the probability of transition from one status to another. Thus it will be a multi-label classification problem. 
 
 ## Data Processing
+
+| BGN\END          | Charged Off | Current | Default | Fully Paid | In Grace Period | Issued | Late (16-30 days) | Late (31-120 days) |
+|------------------|:-----------:|:-------:|:-------:|:----------:|:---------------:|:------:|:-----------------:|:-------------------|
+| Charged Off      | 0           | 0       |  0      |  0         |   0             | 0      |   0               | 0                  |
+| Current          | 22          | 2371634 |    0    | 74912      | 55              |      0 |           1750    |        19110       |
+| Default          | 9452        |  38     |  361    |  25        |    0            |   0    |  0                |   0                |
+|Fully Paid        |  0          | 252     | 0       | 0          | 0               | 0      | 0                 | 0                  |
+|In Grace Period   | 0           |  28     |  0      | 4          |  1              | 0      | 4                 |  5                 |
+|Issued            |  0          |  8      | 0       | 6          | 0               | 3      |  0                | 0                  |
+|Late (16-30 days) | 31          |  670    | 0       | 73         | 1               | 0      | 342               | 1015               |
+|Late (31-120 days)| 4899        | 4891    | 9527    | 588        | 3               | 0      | 118               | 39201              |
+
+
+Then the transition matrix is as following
+
+```python
+transition = {'Issued':['Issued', 'Current','Fully Paid'],
+              'Current': ['Current', 'Fully Paid', 'In Grace Period', 'Late (16-30 days)', 'Late (31-120 days)', 'Charged Off'], 
+              'In Grace Period': ['Current', 'Fully Paid', 'Late (16-30 days)', 'Late (31-120 days)', 'In Grace Period'],
+              'Late (16-30 days)': ['Current','Fully Paid', 'Late (16-30 days)', 'Late (31-120 days)', 'In Grace Period', 'Charged Off'],
+              'Late (31-120 days)': ['Current','Fully Paid', 'Late (16-30 days)', 'Late (31-120 days)', 'In Grace Period', 'Default', 'Charged Off'],
+              'Default': ['Current', 'Fully Paid', 'Default', 'Charged Off'],
+              'Fully Paid': ['Fully Paid']}
+```
+
 There are 166 columns in the combineng dataset. However, the data is not complete and we should check missing values first. Then we need to figure out why the data is missing and make adjustments. Meanwhile, we should remove useless data that can be either not informative or carrying the same information.
 
 <img src="/image/missing_value_dist.png">
@@ -74,16 +99,20 @@ Now we will evaluate the performance of score by precision, recall and f1-score.
 In this multiclass classification problem, we focus on identifying 'bad' loans inclunding default, late, in grace period. Thus we want the classifier with better recall which can identify 'bad' loans accurately from the pool. The above table shows this simple random forest classifier is good at identify late loans. And it can be improved by tuning parameters of trees. Especially, we can consider increase the class weight of 'bad' loans so the model will penalize more on wrong prediction of 'bad' loans.
 
 ### Logistic Classifier
-This logistic classifier used One-Over-Rest strategy to solve multiclass classification. It fitted one model for each class. Thus it yieled 8 set of coefficients of features. The model performed well on identifying Default yet badly when considering recall.
+This logistic classifier used multinomial form to solve multiclass classification. 
 
-|                  |  precision |   recall | f1-score|  support |
-|------------------|:----------:|:--------:|:-------:|:---------|
-|       Charged Off|       1.00 |     1.00 |     1.00|      2161|
-|           Current|       0.99 |     1.00 |     1.00|    357162|
-|           Default|       0.83 |     0.26 |     0.39|      1469|
-|        Fully Paid|       0.98 |     0.96 |     0.97|     11435|
-|   In Grace Period|       0.00 |     0.00 |     0.00|         7|
-|            Issued|       0.00 |     0.00 |     0.00|       336|
-| Late (16-30 days)|       0.56 |     0.00 |     0.00|      8990|
-|Late (31-120 days)|       0.00 |     0.00 |     0.00|         0|
-|       avg / total|       0.98 |     0.97 |    0.97 |   381560 |
+|                  |  precision|   recall | f1-score |  support |
+|------------------|:---------:|:--------:|:--------:|:---------|
+|       Charged Off|       1.00|      0.14|      0.25|      2128|
+|           Current|       0.95|      1.00|      0.97|   356779 |
+|           Default|       0.00|      0.00|      0.00|      1494|
+|        Fully Paid|       0.96|      0.35|      0.51|     11261|
+|   In Grace Period|       0.00|      0.00|      0.00|         9|
+|            Issued|       0.00|      0.00|      0.00|       362|
+| Late (16-30 days)|       0.00|      0.00|      0.00|      8822|
+|Late (31-120 days)|       0.00|      0.00|      0.00|         0|
+|       avg / total|       0.92|      0.95|      0.93|    380855|
+
+<img src="/image/roc_curves.png">
+
+Since there is no case of Late(31-120 days) in the test data, the roc of this class is meaningless.
